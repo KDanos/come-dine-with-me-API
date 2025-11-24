@@ -6,6 +6,7 @@ import 'dotenv/config'
 //Routers
 import authRouter from './controllers/auth.js'
  import isSignedIn from './middleware/isSignedIn.js'
+import errorHandler from './middleware/errorHandler.js'
 
 //Create the application
 const app = express()
@@ -18,13 +19,18 @@ app.use(morgan('dev'))
 //Routes
 app.use('/auth', authRouter)
 
-app.get('/', (req, res) => {
-    res.send('Server is running')
-})
+// app.get('/', (req, res) => {
+//     res.send('Server is running')
+// })
 
-app.get('/secure-route', isSignedIn, (req, res) =>{
- res.json ('you have succesfull passed the isSignedIn verification')
-})
+
+// app.get('/secure-route', isSignedIn, (req, res) =>{
+//  res.json ('you have succesfull passed the isSignedIn verification')
+// })
+//Error handling middleware
+app.use(errorHandler)
+
+
 //Connections
 const connect = async () => {
     try {
