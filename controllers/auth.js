@@ -6,13 +6,14 @@ import jwt from 'jsonwebtoken'
 const router = express.Router()
 
 //Router
-router.post('/sign-up', async (req, res) => {
+router.post('/sign-up', async (req, res, next) => {
     try {
         const newUser = await User.create(req.body)
         return res.status (200).json(newUser)
     } catch (error) {
         console.error('Something went wrong in the auth router.post router')
-        console.log(error.message)
+        next (error)
+        // console.log(error.message)
         return res.status(400).json(error.message)
     }
 })
