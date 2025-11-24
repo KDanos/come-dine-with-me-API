@@ -20,16 +20,13 @@ router.post('/sign-up', async (req, res, next) => {
 
 
 router.post ('/sign-in',  async (req, res) =>{
-
     console.log(req.body)
     const {username, password, _id} = req.body
     try {
         const userToLogin = await User.findOne({username:username})
         if(!userToLogin){
             throw new Error ('Konstantin says you need to sign-up first')
-        }
-        
-        
+        }    
         if(!bcrypt.compareSync(password,userToLogin.password)){
             throw new Error ('Konstantin says you are using the wrong password')
         }

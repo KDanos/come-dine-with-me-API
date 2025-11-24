@@ -1,7 +1,9 @@
 const errorHandler = (error, req, res, next) => {
     console.log('⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔')
     console.log('you are inside the errorhandlers')
-
+    console.log('here is the whole error log')
+    console.log(error)
+    console.log('⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔')
 
 
 
