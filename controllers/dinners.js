@@ -9,7 +9,6 @@ router.get('', async (req, res, next) => {
     try {
         const allDinners = await Dinner.find()
         res.json(allDinners)
-        res.json(allDinners)
     } catch (error) {
         next(error)
     }
@@ -21,18 +20,19 @@ router.post('', isSignedIn, async (req, res, next) => {
         const { host, theme, starter, main, dessert, drink } = req.body
         console.log(`your ${theme} dinner by ${host} contains ${starter}, ${main}, ${dessert}, and ${drink} `)
         const newDinner = await Dinner.create(req.body)
-        res.json(req.body)
+        res.json(newDinner)
     } catch (error) {
         next(error)
     }
 })
 
 //Dinner Show Route
-router.get('/:dinnerId', (req, res, next) => {
+router.get('/:dinnerId', async (req, res, next) => {
     const dinnerId = req.params.dinnerId
     try {
-
-        res.json(`You are seeing info on dinner with id ${dinnerId}`)
+        const myDinner = await Dinner.findById(dinnerId)
+        res.json(myDinner)
+        // res.json(`You are seeing info on dinner with id ${dinnerId}`)
     } catch (error) {
         next(error)
     }
