@@ -1,6 +1,7 @@
 import express from 'express'
 import isSignedIn from '../middleware/isSignedIn.js'
 import Dinner from '../models/dinners.js'
+import User from '../models/users.js';
 
 const router = express.Router();
 
@@ -17,10 +18,17 @@ router.get('', async (req, res, next) => {
 //Dinner Create Route
 router.post('', isSignedIn, async (req, res, next) => {
     try {
-        const { host, theme, starter, main, dessert, drink } = req.body
-        console.log(`your ${theme} dinner by ${host} contains ${starter}, ${main}, ${dessert}, and ${drink} `)
         req.body.host = req.user._id
         const newDinner = await Dinner.create(req.body)
+        const guests = req.body.guests;
+        
+        // checks if guests actually exist in the database if they don't an error is thrown
+        if (guests) {
+            for (const guest of guests) {
+                const guestFound = await User.find({username : guest});
+                if (!guestFound || guestFound.length === 0) throw new Error("Cannot add guest as user does not exist")
+        }
+        }
         res.json(newDinner)
     } catch (error) {
         next(error)
@@ -31,7 +39,7 @@ router.post('', isSignedIn, async (req, res, next) => {
 router.get('/:dinnerId', async (req, res, next) => {
     const dinnerId = req.params.dinnerId
     try {
-        const myDinner = await Dinner.findById(dinnerId).populate("host")
+        const myDinner = await Dinner.findById(dinnerId).populate(["host", "comments.owner"])
         if (!myDinner) throw new Error("Dinner not found")
         res.json(myDinner)
         // res.json(`You are seeing info on dinner with id ${dinnerId}`)
@@ -54,6 +62,13 @@ router.put("/:dinnerId",isSignedIn, async (req,res, next) => {
         }
 
         const updatedDinner = await Dinner.findByIdAndUpdate(dinnerId, req.body)
+        const guests = req.body.guests;
+        if (guests) {
+            for (const guest of guests) {
+                const guestFound = await User.find({username : guest});
+                if (!guestFound || guestFound.length === 0) throw new Error("Cannot add guest as user does not exist")
+        }
+        }
         res.json(updatedDinner)
     } catch (error) {
         next(error)
@@ -68,8 +83,6 @@ router.delete("/:dinnerId",isSignedIn, async (req,res, next) => {
         if (!myDinner) {
             throw new Error("Dinner not found")
         }
-        // console.log("This is the req.user", req.user._id)
-        // console.log("This is the dinner host id", myDinner.host)
         if (!myDinner.host.equals(req.user._id)) {
             throw new Error("You do not own this dinner")
         }
@@ -89,15 +102,16 @@ router.post('/:dinnerId/comments', isSignedIn, async (req, res, next) => {
         if (!myDinner) throw new Error("Dinner not found")
         
         //adds logged in user as the comment owner    
-        //req.body.owner = req.user._id
-
-        console.log(req.user.username)
+        req.body.owner = req.user._id
         
         //adds comment to comment array
-        //myDinner.comments.push(req.body);
+        myDinner.comments.push(req.body);
+        const comment = myDinner.comments[myDinner.comments.length -1]
+        comment.owner = await User.findById(req.user._id)
 
+        await myDinner.save()
 
-        res.json({message: "shush"})
+        res.status(201).json(comment)
     } catch (error) {
         next(error)
     }
