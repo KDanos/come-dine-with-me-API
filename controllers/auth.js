@@ -46,4 +46,13 @@ router.post ('/sign-in',  async (req, res) =>{
         return res.status(400).json(error.message)
     }
 })
+
+router.get('', async (req, res, next) => {
+    try {
+        const allUsers = await User.find()
+        res.json(allUsers)
+    } catch (error) {
+        next(error)
+    }
+})
 export default router
