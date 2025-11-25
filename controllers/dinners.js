@@ -32,7 +32,7 @@ router.get('/:dinnerId', async (req, res, next) => {
     const dinnerId = req.params.dinnerId
     try {
         const myDinner = await Dinner.findById(dinnerId).populate("host")
-        console.log(myDinner._id)
+        if (!myDinner) throw new Error("Dinner not found")
         res.json(myDinner)
         // res.json(`You are seeing info on dinner with id ${dinnerId}`)
     } catch (error) {
@@ -40,12 +40,15 @@ router.get('/:dinnerId', async (req, res, next) => {
     }
 })
 
+// Dinner update route
 router.put("/:dinnerId",isSignedIn, async (req,res, next) => {
     const dinnerId = req.params.dinnerId;
     try {
         const myDinner = await Dinner.findById(dinnerId);
-        // console.log("This is the req.user", req.user._id)
-        // console.log("This is the dinner host id", myDinner.host)
+         if (!myDinner) {
+            throw new Error("Dinner not found")
+        }
+        
         if (!myDinner.host.equals(req.user._id)) {
             throw new Error("You do not own this dinner")
         }
@@ -57,6 +60,7 @@ router.put("/:dinnerId",isSignedIn, async (req,res, next) => {
     }
 })
 
+// Dinner delete route
 router.delete("/:dinnerId",isSignedIn, async (req,res, next) => {
     const dinnerId = req.params.dinnerId;
     try {
@@ -77,13 +81,23 @@ router.delete("/:dinnerId",isSignedIn, async (req,res, next) => {
     }
 })
 
+// Create dinner comment route
 router.post('/:dinnerId/comments', isSignedIn, async (req, res, next) => {
     try {
-        const { host, theme, starter, main, dessert, drink } = req.body
-        console.log(`your ${theme} dinner by ${host} contains ${starter}, ${main}, ${dessert}, and ${drink} `)
-        req.body.host = req.user._id
-        const newDinner = await Dinner.create(req.body)
-        res.json(newDinner)
+        const dinnerId = req.params.dinnerId;
+        const myDinner = await Dinner.findById(dinnerId);
+        if (!myDinner) throw new Error("Dinner not found")
+        
+        //adds logged in user as the comment owner    
+        //req.body.owner = req.user._id
+
+        console.log(req.user.username)
+        
+        //adds comment to comment array
+        //myDinner.comments.push(req.body);
+
+
+        res.json({message: "shush"})
     } catch (error) {
         next(error)
     }
