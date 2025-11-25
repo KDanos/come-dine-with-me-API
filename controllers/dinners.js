@@ -7,7 +7,7 @@ const router = express.Router();
 //Dinner Index Route
 router.get('', async (req, res, next) => {
     try {
-        const allDinners = await Dinner.find()
+        const allDinners = await Dinner.find().populate("host")
         res.json(allDinners)
     } catch (error) {
         next(error)
@@ -31,7 +31,7 @@ router.post('', isSignedIn, async (req, res, next) => {
 router.get('/:dinnerId', async (req, res, next) => {
     const dinnerId = req.params.dinnerId
     try {
-        const myDinner = await Dinner.findById(dinnerId)
+        const myDinner = await Dinner.findById(dinnerId).populate("host")
         console.log(myDinner._id)
         res.json(myDinner)
         // res.json(`You are seeing info on dinner with id ${dinnerId}`)
@@ -76,5 +76,18 @@ router.delete("/:dinnerId",isSignedIn, async (req,res, next) => {
         next(error)
     }
 })
+
+router.post('/:dinnerId/comments', isSignedIn, async (req, res, next) => {
+    try {
+        const { host, theme, starter, main, dessert, drink } = req.body
+        console.log(`your ${theme} dinner by ${host} contains ${starter}, ${main}, ${dessert}, and ${drink} `)
+        req.body.host = req.user._id
+        const newDinner = await Dinner.create(req.body)
+        res.json(newDinner)
+    } catch (error) {
+        next(error)
+    }
+})
+
 
 export default router
