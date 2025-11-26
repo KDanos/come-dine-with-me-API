@@ -1,11 +1,8 @@
 const errorHandler = (error, req, res, next) => {
     console.log('⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔')
-    console.log('you are inside the errorhandlers')
-    console.log('here is the whole error log')
+    console.log('you are inside Konstantin errorhandler')
     console.log(error)
     console.log('⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔')
-
-
 
     //log all errors
     console.log('the error log is: ', error.code)
@@ -19,7 +16,8 @@ const errorHandler = (error, req, res, next) => {
         console.log('allErrors is currently: ', allErrors)
         allErrors.forEach(keyValuePair => {
             const [fieldName, value] = keyValuePair
-            errorResponse[fieldName] = `${fieldName} "${value}" already taken. Please cose another`
+            errorResponse[fieldName] =  `${fieldName} "${value}" already taken. Please chose another`
+            'THIS IS A TEMP ERROR MESSAGE'
         })
         return res.status(400).json(errorResponse)
     }
