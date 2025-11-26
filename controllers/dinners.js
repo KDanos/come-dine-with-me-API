@@ -21,13 +21,13 @@ router.post('', isSignedIn, async (req, res, next) => {
         req.body.host = req.user._id
         const newDinner = await Dinner.create(req.body)
         const guests = req.body.guests;
-        
+
         // checks if guests actually exist in the database if they don't an error is thrown
         if (guests) {
             for (const guest of guests) {
-                const guestFound = await User.find({username : guest});
+                const guestFound = await User.find({ username: guest });
                 if (!guestFound || guestFound.length === 0) throw new Error("Cannot add guest as user does not exist")
-        }
+            }
         }
         res.json(newDinner)
     } catch (error) {
@@ -42,41 +42,13 @@ router.get('/:dinnerId', async (req, res, next) => {
         const myDinner = await Dinner.findById(dinnerId).populate(["host", "comments.owner"])
         if (!myDinner) throw new Error("Dinner not found")
         res.json(myDinner)
-        // res.json(`You are seeing info on dinner with id ${dinnerId}`)
     } catch (error) {
         next(error)
     }
 })
 
 // Dinner update route
-router.put("/:dinnerId",isSignedIn, async (req,res, next) => {
-    const dinnerId = req.params.dinnerId;
-    try {
-        const myDinner = await Dinner.findById(dinnerId);
-         if (!myDinner) {
-            throw new Error("Dinner not found")
-        }
-        
-        if (!myDinner.host.equals(req.user._id)) {
-            throw new Error("You do not own this dinner")
-        }
-
-        const updatedDinner = await Dinner.findByIdAndUpdate(dinnerId, req.body)
-        const guests = req.body.guests;
-        if (guests) {
-            for (const guest of guests) {
-                const guestFound = await User.find({username : guest});
-                if (!guestFound || guestFound.length === 0) throw new Error("Cannot add guest as user does not exist")
-        }
-        }
-        res.json(updatedDinner)
-    } catch (error) {
-        next(error)
-    }
-})
-
-// Dinner delete route
-router.delete("/:dinnerId",isSignedIn, async (req,res, next) => {
+router.put("/:dinnerId", isSignedIn, async (req, res, next) => {
     const dinnerId = req.params.dinnerId;
     try {
         const myDinner = await Dinner.findById(dinnerId);
@@ -87,6 +59,31 @@ router.delete("/:dinnerId",isSignedIn, async (req,res, next) => {
             throw new Error("You do not own this dinner")
         }
 
+        const updatedDinner = await Dinner.findByIdAndUpdate(dinnerId, req.body)
+        const guests = req.body.guests;
+        if (guests) {
+            for (const guest of guests) {
+                const guestFound = await User.find({ username: guest });
+                if (!guestFound || guestFound.length === 0) throw new Error("Cannot add guest as user does not exist")
+            }
+        }
+        res.json(updatedDinner)
+    } catch (error) {
+        next(error)
+    }
+})
+
+// Dinner delete route
+router.delete("/:dinnerId", isSignedIn, async (req, res, next) => {
+    const dinnerId = req.params.dinnerId;
+    try {
+        const myDinner = await Dinner.findById(dinnerId);
+        if (!myDinner) {
+            throw new Error("Dinner not found")
+        }
+        if (!myDinner.host.equals(req.user._id)) {
+            throw new Error("You do not own this dinner")
+        }
         await Dinner.findByIdAndDelete(dinnerId);
         res.sendStatus(204);
     } catch (error) {
@@ -100,13 +97,13 @@ router.post('/:dinnerId/comments', isSignedIn, async (req, res, next) => {
         const dinnerId = req.params.dinnerId;
         const myDinner = await Dinner.findById(dinnerId);
         if (!myDinner) throw new Error("Dinner not found")
-        
+
         //adds logged in user as the comment owner    
         req.body.owner = req.user._id
-        
+
         //adds comment to comment array
         myDinner.comments.push(req.body);
-        const comment = myDinner.comments[myDinner.comments.length -1]
+        const comment = myDinner.comments[myDinner.comments.length - 1]
         comment.owner = await User.findById(req.user._id)
 
         await myDinner.save()

@@ -16,7 +16,7 @@ router.post('/sign-up', async (req, res, next) => {
 })
 
 
-router.post ('/sign-in',  async (req, res) =>{
+router.post ('/sign-in',  async (req, res, next) =>{
     console.log(req.body)
     const {username, password, _id} = req.body
     try {
@@ -39,9 +39,6 @@ router.post ('/sign-in',  async (req, res) =>{
 
     } catch (error) {
         next(error)
-        // console.error ('Something went wrong with the sign-in route')
-        // console.log(error.message)
-        // return res.status(400).json(error.message)
     }
 })
 
