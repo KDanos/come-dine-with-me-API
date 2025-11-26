@@ -15,6 +15,7 @@ const dinnerSchema = new mongoose.Schema ({
     main: {type: String},
     dessert: {type: String},
     drink: {type: String},
+    date: {type: Date},
     comments: [commentSchema],
     guests: {type: [mongoose.Schema.Types.ObjectId], ref: 'User'},
     isCompleted: {type: Boolean}
