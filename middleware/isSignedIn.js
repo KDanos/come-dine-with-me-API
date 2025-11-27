@@ -13,9 +13,7 @@ const isSignedIn = async (req, res, next) => {
         if (!user) {
             throw new Error('During authorisation, no user is found in the database')
         }
-        req.user = user
-        console.log('the signed in user is', user)
-        
+        req.user = user      
         next()
     
     } catch (error) {
