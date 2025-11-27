@@ -10,11 +10,11 @@ const errorHandler = (error, req, res, next) => {
     //Unique constaint
     if (error.code === 11000) {
         const allErrors = Object.entries(error.keyValue)
-        console.log('allErrors is currently: ', allErrors)
+        console.log('allErrors was initially: ', allErrors)
         allErrors.forEach(keyValuePair => {
             const [fieldName, value] = keyValuePair
             errorResponse[fieldName] =  `${fieldName} "${value}" already taken. Please chose another`
-            'THIS IS A TEMP ERROR MESSAGE'
+            
         })
         return res.status(400).json(errorResponse)
     }
@@ -22,8 +22,12 @@ const errorHandler = (error, req, res, next) => {
     //Cast error
     if(error.name === 'CastError' && error.kind === 'ObjectId')
         return res.status (404).json({message: 'Constantinos could not find this resource'})
-    
-    return res.json(error)
+    //Validation error
+    errorObjects.forEach(error =>{
+        errorResponse[error?.properties?.path || error.path ||'fieldError']=error?.properties?.message || error.message|| 'There has been some kind of validation error'
+    })
+    // console.log(error)
+    return res.status(error.status || 500).json({message: error.message || 'Something went wrong'})
 }
 
 export default errorHandler
