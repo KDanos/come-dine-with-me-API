@@ -63,6 +63,7 @@ router.put("/:dinnerId", isSignedIn, async (req, res, next) => {
         }
 
         const guests = req.body.guests;
+        let message;
         if (guests && guests.length > 0) {
             const guestsFound = await User.find({ username: {$in : guests} });
             if (guests.length !== guestsFound.length) {
