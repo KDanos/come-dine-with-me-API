@@ -4,9 +4,6 @@ const errorHandler = (error, req, res, next) => {
     console.log(error)
     console.log('⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔⛔')
 
-    //log all errors
-    console.log('the error log is: ', error.code)
-
     //Define an object to which we can append new error keys
     const errorResponse = {}
 
@@ -25,6 +22,7 @@ const errorHandler = (error, req, res, next) => {
     //Cast error
     if(error.name === 'CastError' && error.kind === 'ObjectId')
         return res.status (404).json({message: 'Constantinos could not find this resource'})
+    
     return res.json(error)
 }
 

@@ -8,7 +8,7 @@ const router = express.Router();
 //Dinner Index Route
 router.get('', async (req, res, next) => {
     try {
-        const allDinners = await Dinner.find().populate("host")
+        const allDinners = await Dinner.find().populate('host')
         res.json(allDinners)
     } catch (error) {
         next(error)
@@ -19,7 +19,7 @@ router.get('', async (req, res, next) => {
 router.post('', isSignedIn, async (req, res, next) => {
     try {
         req.body.host = req.user._id
-        const newDinner = await Dinner.create(req.body)
+        const newDinner = (await Dinner.create(req.body))
         const guests = req.body.guests;
 
         // checks if guests actually exist in the database if they don't an error is thrown
