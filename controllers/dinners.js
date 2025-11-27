@@ -19,17 +19,21 @@ router.get('', async (req, res, next) => {
 router.post('', isSignedIn, async (req, res, next) => {
     try {
         req.body.host = req.user._id
-        const newDinner = await Dinner.create(req.body)
-        const guests = req.body.guests;
-
         // checks if guests actually exist in the database if they don't an error is thrown
-        if (guests) {
-            for (const guest of guests) {
-                const guestFound = await User.find({ username: guest });
-                if (!guestFound || guestFound.length === 0) throw new Error("Cannot add guest as user does not exist")
+        const guests = req.body.guests;
+        let message;
+        if (guests && guests.length > 0) {
+            const guestsFound = await User.find({ username: {$in : guests} });
+            if (guests.length !== guestsFound.length) {
+                message = "Not all guests were added";
             }
+            console.log(guestsFound.map(guest => guest._id));
         }
-        res.json(newDinner)
+        
+        // console.log("THIS IS GUESTS", guests)
+        // const newDinner = await Dinner.create(req.body)
+
+        // res.json(newDinner)
     } catch (error) {
         next(error)
     }
