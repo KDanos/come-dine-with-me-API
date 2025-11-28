@@ -7,13 +7,14 @@ import cors from 'cors'
 import 'dotenv/config'
 //Routers
 import authRouter from '../../controllers/auth.js'
+import dinnerRouter from '../../controllers/dinners.js' 
 import errorHandler from '../../middleware/errorHandler.js'
 
 const app = express()
 const port = 3000
 
 //Middleware
-// app.use(express.json())
+app.use(express.json())
 app.use(cors())
 app.use(morgan('dev'))
 
