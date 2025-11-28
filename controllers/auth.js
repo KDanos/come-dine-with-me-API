@@ -30,10 +30,10 @@ router.post ('/sign-in',  async (req, res, next) =>{
     try {
         const userToLogin = await User.findOne({username:username})
         if(!userToLogin){
-            throw new NotFound ('Konstantin says you need to sign-up first')
+            throw new NotFound ('You should sign up before coming to dine with us')
         }    
         if(!bcrypt.compareSync(password,userToLogin.password)){
-            throw new Unauthorised ('Konstantin says you are using the wrong password')
+            throw new Unauthorised ('Get your password in order before dinner')
         }
         
         //Generate the token
