@@ -42,7 +42,7 @@ router.post('', isSignedIn, async (req, res, next) => {
 router.get('/:dinnerId', async (req, res, next) => {
     const dinnerId = req.params.dinnerId
     try {
-        const myDinner = await Dinner.findById(dinnerId).populate(["host", "comments.owner"])
+        const myDinner = await Dinner.findById(dinnerId).populate(["host", "comments.owner", "guests"])
         if (!myDinner) throw new Error("Dinner not found")
         res.json(myDinner)
     } catch (error) {
