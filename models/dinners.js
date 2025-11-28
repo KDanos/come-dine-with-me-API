@@ -11,11 +11,11 @@ const commentSchema = new mongoose.Schema({
 const dinnerSchema = new mongoose.Schema({
     host: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     theme: { type: String, required: true },
-    starter: { type: String },
-    main: { type: String },
-    dessert: { type: String },
-    drink: { type: String },
-    date: { type: Date },
+    starter: { type: String, required: true },
+    main: { type: String, required: true },
+    dessert: { type: String, required: true },
+    drink: { type: String, required: true },
+    date: { type: Date, required: true },
     comments: [commentSchema],
     guests: { type: [mongoose.Schema.Types.ObjectId], ref: 'User' },
     isCompleted: { type: Boolean }
